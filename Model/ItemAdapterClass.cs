@@ -14,6 +14,7 @@ namespace SampleListView
 		List<ItemClass> _lstItem; 
 		internal static List<string> lstSelectedItem; 
 		ViewHolderItem viewHolder;
+		CheckBox chkItem;
 		public ItemAdapterClass (Activity c,List<ItemClass> lstIem)
 		{
 			_context = c;
@@ -42,6 +43,12 @@ namespace SampleListView
 				viewHolder.txtTemName = rowView.FindViewById<TextView> (Resource.Id.lblItemName);
 				viewHolder.imgItem = rowView.FindViewById<ImageView> (Resource.Id.imgItem);
 				viewHolder.chkItem = rowView.FindViewById<CheckBox> (Resource.Id.checkitem); 
+ 
+				chkItem = rowView.FindViewById<CheckBox> (Resource.Id.checkitem);
+//				chkItem.Click += delegate(object sender, EventArgs e) {
+//					Toast.MakeText(_context,string.Format( "Position:{0}, {1}",position, _lstItem [position].ItemName),ToastLength.Long).Show();
+// 
+//				};
 
 				viewHolder.chkItem.Click += delegate(object sender, EventArgs e)
 				{
@@ -64,7 +71,10 @@ namespace SampleListView
 			{
 				viewHolder = (ViewHolderItem)rowView.Tag; 
 			} 
+			chkItem.Click += delegate(object sender, EventArgs e) {
+				Toast.MakeText(_context,string.Format( "Position:{0}, {1}",position, _lstItem [position].ItemName),ToastLength.Long).Show();
 
+			};
 			viewHolder.txtTemName.Text = _lstItem [position].ItemName;  
 			viewHolder.imgItem.SetImageResource (Resource.Drawable.imgItem); 
 		    viewHolder.chkItem.Checked = lstSelectedItem.Contains (_lstItem [position].ItemName) ? true :false ; 
