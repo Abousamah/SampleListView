@@ -30,7 +30,6 @@ namespace SampleListView
 			ItemClass objItem; 
 			for (int i = 0; i <2000 ; i++)
 			{ 
-				
 				objItem = new ItemClass ();
 				objItem.ItemName =string.Format( "Item_{0} ",i);
 				objItem.ItemImage = "Image name";

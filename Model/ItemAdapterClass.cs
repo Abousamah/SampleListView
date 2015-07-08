@@ -71,10 +71,10 @@ namespace SampleListView
 			{
 				viewHolder = (ViewHolderItem)rowView.Tag; 
 			} 
-			chkItem.Click += delegate(object sender, EventArgs e) {
-				Toast.MakeText(_context,string.Format( "Position:{0}, {1}",position, _lstItem [position].ItemName),ToastLength.Long).Show();
-
-			};
+//			chkItem.Click += delegate(object sender, EventArgs e) {
+//				Toast.MakeText(_context,string.Format( "Position:{0}, {1}",position, _lstItem [position].ItemName),ToastLength.Long).Show();
+//
+//			};
 			viewHolder.txtTemName.Text = _lstItem [position].ItemName;  
 			viewHolder.imgItem.SetImageResource (Resource.Drawable.imgItem); 
 		    viewHolder.chkItem.Checked = lstSelectedItem.Contains (_lstItem [position].ItemName) ? true :false ; 
