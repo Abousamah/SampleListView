@@ -14,7 +14,8 @@ namespace SampleListView
 		List<ItemClass> _lstItem; 
 		internal static List<string> lstSelectedItem; 
 		ViewHolderItem viewHolder;
-		CheckBox chkItem;
+		internal event Action<string> ActionImgSelectedToActivity; 
+//		CheckBox chkItem;
 		public ItemAdapterClass (Activity c,List<ItemClass> lstIem)
 		{
 			_context = c;
@@ -43,12 +44,8 @@ namespace SampleListView
 				viewHolder.txtTemName = rowView.FindViewById<TextView> (Resource.Id.lblItemName);
 				viewHolder.imgItem = rowView.FindViewById<ImageView> (Resource.Id.imgItem);
 				viewHolder.chkItem = rowView.FindViewById<CheckBox> (Resource.Id.checkitem); 
+				viewHolder.Initialize (rowView);
  
-				chkItem = rowView.FindViewById<CheckBox> (Resource.Id.checkitem);
-//				chkItem.Click += delegate(object sender, EventArgs e) {
-//					Toast.MakeText(_context,string.Format( "Position:{0}, {1}",position, _lstItem [position].ItemName),ToastLength.Long).Show();
-// 
-//				};
 
 				viewHolder.chkItem.Click += delegate(object sender, EventArgs e)
 				{
@@ -63,7 +60,7 @@ namespace SampleListView
 						{
 							lstSelectedItem.Add (_lstItem [pos].ItemName); 
 						} 
-					Console.WriteLine ("position " + pos);
+					Toast.MakeText(_context,string.Format("Position :{0} ItemName : {1}",pos,_lstItem[pos].ItemName),ToastLength.Short).Show();
 				};
 				rowView.Tag = viewHolder;
 			} 
@@ -71,10 +68,12 @@ namespace SampleListView
 			{
 				viewHolder = (ViewHolderItem)rowView.Tag; 
 			} 
-//			chkItem.Click += delegate(object sender, EventArgs e) {
-//				Toast.MakeText(_context,string.Format( "Position:{0}, {1}",position, _lstItem [position].ItemName),ToastLength.Long).Show();
-//
-//			};
+			viewHolder.ActionImgViewSelectedToGetView = () =>
+			{
+				if(ActionImgSelectedToActivity!=null)
+					ActionImgSelectedToActivity(_lstItem[position].ItemName);
+			};
+ 
 			viewHolder.txtTemName.Text = _lstItem [position].ItemName;  
 			viewHolder.imgItem.SetImageResource (Resource.Drawable.imgItem); 
 		    viewHolder.chkItem.Checked = lstSelectedItem.Contains (_lstItem [position].ItemName) ? true :false ; 
@@ -86,7 +85,18 @@ namespace SampleListView
 		{
 			internal   TextView txtTemName;
 			internal   ImageView imgItem;
-			internal   CheckBox chkItem; 
+			internal   CheckBox chkItem;  
+
+			internal Action ActionImgViewSelectedToGetView{ get; set;} 
+			internal void Initialize(View view)
+			{
+				imgItem=view.FindViewById<ImageView> (Resource.Id.imgItem);
+				imgItem.Click += delegate(object sender , EventArgs e )
+				{
+					ActionImgViewSelectedToGetView();
+				};  
+			} 
+
 		}
 	}
 }

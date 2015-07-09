@@ -2,6 +2,7 @@
 using Android.Widget;
 using Android.OS;
 using System.Collections.Generic;
+using System;
 
 namespace SampleListView
 {
@@ -16,14 +17,26 @@ namespace SampleListView
 			base.OnCreate (bundle); 
 			SetContentView (Resource.Layout.Main);
 			listViewItem = FindViewById<ListView> (Resource.Id.listViewItem);
-			BindListView ();
+			BindListView (); 
+
+		
 		}
 		void BindListView() 
 		{ 
 			 lstItem = new List<ItemClass> ();
 		     FillList ();
+			if(lstItem!=null && lstItem.Count >0)
+			{
+				if ( objItemAdapter != null )
+				{
+					objItemAdapter.ActionImgSelectedToActivity -= SelectedItem;
+					objItemAdapter = null;
+				}
+				
 		     objItemAdapter = new ItemAdapterClass (this, lstItem);
+			 objItemAdapter.ActionImgSelectedToActivity += SelectedItem;
 			 listViewItem.Adapter = objItemAdapter; 
+			}
 		}
 		void FillList()
 		{
@@ -35,6 +48,10 @@ namespace SampleListView
 				objItem.ItemImage = "Image name";
 				lstItem.Add (objItem); 
 			} 
+		}
+		void SelectedItem( string strItemName)
+		{
+			Toast.MakeText ( this , string.Format("From Activity :{0}",strItemName ), ToastLength.Short ).Show ();
 		}
 	}
 }
