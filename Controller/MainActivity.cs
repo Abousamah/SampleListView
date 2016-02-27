@@ -2,8 +2,9 @@
 using Android.Widget;
 using Android.OS;
 using System.Collections.Generic;
-using System;
-
+//created: 14-07-2015
+//updated: 27-02-2016
+//note : Good practce in listview binding 
 namespace SampleListView
 {
 	[Activity (Label = "SampleListView", MainLauncher = true, Icon = "@drawable/icon")]
@@ -17,9 +18,7 @@ namespace SampleListView
 			base.OnCreate (bundle); 
 			SetContentView (Resource.Layout.Main);
 			listViewItem = FindViewById<ListView> (Resource.Id.listViewItem);
-			BindListView (); 
-
-		
+			BindListView ();  
 		}
 		void BindListView() 
 		{ 
@@ -29,15 +28,18 @@ namespace SampleListView
 			{
 				if ( objItemAdapter != null )
 				{
+					//un-subscribe the event to avoid adding multiple event for click
 					objItemAdapter.ActionImgSelectedToActivity -= SelectedItem;
 					objItemAdapter = null;
 				}
 				
 		     objItemAdapter = new ItemAdapterClass (this, lstItem);
+				//subscribe to click event from Adapter class GetView() method 
 			 objItemAdapter.ActionImgSelectedToActivity += SelectedItem;
 			 listViewItem.Adapter = objItemAdapter; 
 			}
 		}
+		//Fill some random data to list of type string lstItem
 		void FillList()
 		{
 			ItemClass objItem; 

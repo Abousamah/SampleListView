@@ -2,20 +2,19 @@
 using Android.Views;
 using Android.Widget;
 using Android.App;
-using System.IO;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Contexts; 
+
 //stackoverflow.com/questions/16453379/android-list-adapter-returns-wrong-position-in-getview
 namespace SampleListView
 {
 	public class ItemAdapterClass :BaseAdapter
 	{
-		Activity _context;
-		List<ItemClass> _lstItem; 
+		readonly Activity _context;
+		readonly List<ItemClass> _lstItem; 
 		internal static List<string> lstSelectedItem; 
 		ViewHolderItem viewHolder;
-		internal event Action<string> ActionImgSelectedToActivity; 
-//		CheckBox chkItem;
+		//to publish ImgView click event to ActivityClass 
+		internal event Action<string> ActionImgSelectedToActivity;  
 		public ItemAdapterClass (Activity c,List<ItemClass> lstIem)
 		{
 			_context = c;
@@ -36,40 +35,28 @@ namespace SampleListView
 		}
 		public override  View GetView (int position,  View convertView,  ViewGroup parent)
 		{ 
-			View rowView = convertView;
-			//reuse view
-			if (rowView == null) { 
+			View rowView = convertView; 
+			if (rowView == null) {
+				//create new row view
 				rowView = _context.LayoutInflater.Inflate (Resource.Layout.ItemCustomLayout, parent, false); 
 				viewHolder = new ViewHolderItem ();
 				viewHolder.txtTemName = rowView.FindViewById<TextView> (Resource.Id.lblItemName);
 				viewHolder.imgItem = rowView.FindViewById<ImageView> (Resource.Id.imgItem);
 				viewHolder.chkItem = rowView.FindViewById<CheckBox> (Resource.Id.checkitem); 
-				viewHolder.Initialize (rowView);
- 
-
-				viewHolder.chkItem.Click += delegate(object sender, EventArgs e)
-				{
-					Console.WriteLine ("row click  " + position + " _ItemName " + _lstItem [position].ItemName); 
-					var views =	(CheckBox)sender; 
-					int pos = (int)views.Tag; 
-						if (lstSelectedItem.Contains (_lstItem [pos].ItemName))
-						{
-							lstSelectedItem.Remove (_lstItem [pos].ItemName); 
-						}
-						else
-						{
-							lstSelectedItem.Add (_lstItem [pos].ItemName); 
-						} 
-					Toast.MakeText(_context,string.Format("Position :{0} ItemName : {1}",pos,_lstItem[pos].ItemName),ToastLength.Short).Show();
-				};
+				viewHolder.Initialize (rowView); //to initialize listen for ImgView click   
+				//tag viewHolder instance to row view.
 				rowView.Tag = viewHolder;
 			} 
 			else
-			{
+			{//re-use row view
+				//fetch viewholder instance from the Tag attached to rowview
 				viewHolder = (ViewHolderItem)rowView.Tag; 
 			} 
-			viewHolder.ActionImgViewSelectedToGetView = () =>
+			//Initialize click event
+			//subscribe to event from viewholder ImgView click 
+			viewHolder.eventHandlerImgViewSelected = () =>
 			{
+				// publish ImgView click event to ActivityClass 
 				if(ActionImgSelectedToActivity!=null)
 					ActionImgSelectedToActivity(_lstItem[position].ItemName);
 			};
@@ -86,15 +73,13 @@ namespace SampleListView
 			internal   TextView txtTemName;
 			internal   ImageView imgItem;
 			internal   CheckBox chkItem;  
-
-			internal Action ActionImgViewSelectedToGetView{ get; set;} 
+			//to publish ImgView click event to Adapter GetView()
+			internal event EventHandler eventHandlerImgViewSelected;
 			internal void Initialize(View view)
 			{
 				imgItem=view.FindViewById<ImageView> (Resource.Id.imgItem);
-				imgItem.Click += delegate(object sender , EventArgs e )
-				{
-					ActionImgViewSelectedToGetView();
-				};  
+				//to publish ImgView click event to Adapter GetView()
+				imgItem.Click += (object sender, EventArgs e) => eventHandlerImgViewSelected ();  
 			} 
 
 		}
